@@ -13,6 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -30,9 +31,10 @@ import com.newyttry2bit.nera.ui.state.NeraUiState
 fun HomeScreen(
     state: NeraUiState,
     onCategorySelected: (String) -> Unit,
-    onSongClick: (VirexSong) -> Unit,
+    onSongClick: (VirexSong, List<VirexSong>) -> Unit,
     onRefresh: () -> Unit,
-    onOpenSettings: () -> Unit
+    onOpenSettings: () -> Unit,
+    onPlayRecommendations: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -60,16 +62,8 @@ fun HomeScreen(
                     onClick = { onCategorySelected(category) },
                     label = { Text(category) },
                     colors = AssistChipDefaults.assistChipColors(
-                        containerColor = if (selected) {
-                            MaterialTheme.colorScheme.primary
-                        } else {
-                            MaterialTheme.colorScheme.surfaceContainer
-                        },
-                        labelColor = if (selected) {
-                            MaterialTheme.colorScheme.onPrimary
-                        } else {
-                            MaterialTheme.colorScheme.onSurface
-                        }
+                        containerColor = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceContainer,
+                        labelColor = if (selected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
                     )
                 )
             }
@@ -82,12 +76,20 @@ fun HomeScreen(
             }
         }
 
+        Button(onClick = onPlayRecommendations, modifier = Modifier.fillMaxWidth()) {
+            Text("Smart Queue from Current Song")
+        }
+
         if (state.isLoading) {
             CircularProgressIndicator()
         }
 
+        state.errorMessage?.let {
+            Text(text = it, color = MaterialTheme.colorScheme.error)
+        }
+
         state.homeSongs.forEach { song ->
-            SongCard(song = song, onClick = { onSongClick(song) })
+            SongCard(song = song, onClick = { onSongClick(song, state.homeSongs) })
         }
     }
 }

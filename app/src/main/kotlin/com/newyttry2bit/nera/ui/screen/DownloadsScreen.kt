@@ -19,7 +19,9 @@ import com.newyttry2bit.nera.ui.component.SongCard
 @Composable
 fun DownloadsScreen(
     songs: List<VirexSong>,
-    onSongClick: (VirexSong) -> Unit
+    onSongClick: (VirexSong) -> Unit,
+    onPlayAll: () -> Unit,
+    onRemove: (String) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -30,13 +32,18 @@ fun DownloadsScreen(
         Text("Downloads", style = MaterialTheme.typography.headlineSmall)
         Text("${songs.size} tracks available offline", style = MaterialTheme.typography.bodyMedium)
 
-        Button(onClick = { songs.firstOrNull()?.let(onSongClick) }, modifier = Modifier.fillMaxWidth()) {
+        Button(onClick = onPlayAll, modifier = Modifier.fillMaxWidth()) {
             Text("Play All")
         }
 
         LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             items(songs, key = { it.id }) { song ->
-                SongCard(song = song, onClick = { onSongClick(song) })
+                Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                    SongCard(song = song, onClick = { onSongClick(song) })
+                    Button(onClick = { onRemove(song.id) }, modifier = Modifier.fillMaxWidth()) {
+                        Text("Remove Download")
+                    }
+                }
             }
         }
     }

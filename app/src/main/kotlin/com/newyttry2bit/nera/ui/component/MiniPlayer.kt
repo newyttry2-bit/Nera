@@ -21,7 +21,12 @@ import androidx.compose.ui.unit.dp
 import com.newyttry2bit.nera.data.model.VirexSong
 
 @Composable
-fun MiniPlayer(song: VirexSong, onOpenPlayer: () -> Unit) {
+fun MiniPlayer(
+    song: VirexSong,
+    isPlaying: Boolean,
+    onOpenPlayer: () -> Unit,
+    onTogglePlayPause: () -> Unit
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -43,10 +48,11 @@ fun MiniPlayer(song: VirexSong, onOpenPlayer: () -> Unit) {
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.weight(1f)
             )
-            Row(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Rounded.PauseCircle, contentDescription = "Pause")
-                Icon(Icons.Rounded.PlayCircle, contentDescription = "Play")
-            }
+            Icon(
+                if (isPlaying) Icons.Rounded.PauseCircle else Icons.Rounded.PlayCircle,
+                contentDescription = if (isPlaying) "Pause" else "Play",
+                modifier = Modifier.clickable(onClick = onTogglePlayPause)
+            )
         }
     }
 }
